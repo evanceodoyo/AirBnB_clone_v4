@@ -45,21 +45,21 @@ function initialize () {
 }
 
 $('#toggle_reviews').click(function () {
-    const reviewsSection = $('.reviews');
-    const toggleSpan = $('#toggle_reviews');
+  const reviewsSection = $('.reviews');
+  const toggleSpan = $('#toggle_reviews');
 
-    if (toggleSpan.text() === 'show') {
-      // Fetch and display reviews
-      fetchReviews().then(function (reviews) {
-        displayReviews(reviews);
-        toggleSpan.text('hide');
-      });
-    } else {
-      // Hide reviews
-      reviewsSection.empty();
-      toggleSpan.text('show');
-    }
-  });
+  if (toggleSpan.text() === 'show') {
+    // Fetch and display reviews
+    fetchReviews().then(function (reviews) {
+      displayReviews(reviews);
+      toggleSpan.text('hide');
+    });
+  } else {
+    // Hide reviews
+    reviewsSection.empty();
+    toggleSpan.text('show');
+  }
+});
 
 function apiStatus () {
   $.get('http://0.0.0.0:5001/api/v1/status/', (data, textStatus) => {
@@ -108,10 +108,10 @@ function updateLocations () {
   $('.locations h4').text(selectedLocations.sort().join(', '));
 }
 
-function fetchReviews() {
-    // Implement fetch reviews
+function fetchReviews () {
+  // Implement fetch reviews
 }
 
 function displayReviews (reviews) {
-    // display code
+  // display code
 }

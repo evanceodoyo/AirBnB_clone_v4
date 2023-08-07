@@ -1,6 +1,6 @@
 $(document).ready(initialize);
 
-function initialize() {
+function initialize () {
   const amenity = {};
   $('.amenities .popover input').change(function () {
     if ($(this).is(':checked')) {
@@ -15,7 +15,7 @@ function initialize() {
   getPlaces();
 }
 
-function apiStatus() {
+function apiStatus () {
   $.get('http://0.0.0.0:5001/api/v1/status/', (data, textStatus) => {
     if (textStatus === 'success' && data.status === 'OK') {
       $('#api_status').addClass('available');
@@ -25,7 +25,7 @@ function apiStatus() {
   });
 }
 
-function getPlaces() {
+function getPlaces () {
   $.ajax({
     url: 'http://0.0.0.0:5001/api/v1/places_search/',
     type: 'POST',
@@ -47,13 +47,13 @@ function getPlaces() {
           '<div class="description">',
           `${content.description}`,
           '</div>',
-          '</article>',
+          '</article>'
         ];
         $('SECTION.places').append(data.join(''));
       }
     },
     error: function (error) {
       console.log(error);
-    },
+    }
   });
 }
