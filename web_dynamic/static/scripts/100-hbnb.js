@@ -1,6 +1,9 @@
 $(document).ready(initialize);
 
-function initialize() {
+const selectedStates = {};
+const selectedCities = {};
+
+function initialize () {
   const amenity = {};
   $('.amenities .popover input').change(function () {
     if ($(this).is(':checked')) {
@@ -11,11 +14,37 @@ function initialize() {
     const amenities = Object.keys(amenity);
     $('.amenities h4').text(amenities.sort().join(', '));
   });
+
+  $('.state_input').change(function () {
+    const stateId = $(this).attr('data-id');
+    const stateName = $(this).attr('data-name');
+
+    if ($(this).is(':checked')) {
+      selectedStates[stateId] = stateName;
+    } else {
+      delete selectedStates[stateId];
+    }
+
+    updateLocations();
+  });
+
+  $('.city_input').change(function () {
+    const cityId = $(this).attr('data-id');
+    const cityName = $(this).attr('data-name');
+
+    if ($(this).is(':checked')) {
+      selectedCities[cityId] = cityName;
+    } else {
+      delete selectedCities[cityId];
+    }
+
+    updateLocations();
+  });
   apiStatus();
   getPlaceAmenity();
 }
 
-function apiStatus() {
+function apiStatus () {
   $.get('http://0.0.0.0:5001/api/v1/status/', (data, textStatus) => {
     if (textStatus === 'success' && data.status === 'OK') {
       $('#api_status').addClass('available');
@@ -25,9 +54,9 @@ function apiStatus() {
   });
 }
 
-function getPlaceAmenity() {
+function getPlaceAmenity () {
   $.post({
-    url:'http://0.0.0.0:5001/api/v1/places_search/',
+    url: 'http://0.0.0.0:5001/api/v1/places_search/',
     headers: { 'Content-Type': 'application/json' },
     data: JSON.stringify({ amenities: Object.values(amenity) }),
     success: function (response) {
@@ -46,13 +75,18 @@ function getPlaceAmenity() {
           '<div class="description">',
           `${content.description}`,
           '</div>',
-          '</article>',
+          '</article>'
         ];
         $('SECTION.places').append(data.join(''));
       }
     },
     error: function (error) {
       console.log(error);
-    },
+    }
   });
+}
+
+function updateLocations () {
+  const selectedLocations = [...Object.values(selectedStates), ...Object.values(selectedCities)];
+  $('.locations h4').text(selectedLocations.sort().join(', '));
 }
