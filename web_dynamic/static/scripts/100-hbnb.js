@@ -19,7 +19,6 @@ function initialize () {
     $('.amenities h4').text(amenities.sort().join(', '));
   });
 
-
   $('.state_input').change(function () {
     const stateId = $(this).attr('data-id');
     const stateName = $(this).attr('data-name');
