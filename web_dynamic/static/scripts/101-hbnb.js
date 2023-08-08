@@ -49,21 +49,10 @@ function initialize () {
     updateLocations(cities);
   });
 
-  const toggleButton = $('.toggle_reviews');
-  toggleButton.on('click', function () {
-    console.log('Toggle clicked');
-    if (toggleButton.text() === 'show') {
-      fetchAndDisplayReviews();
-      toggleButton.text('hide');
-    } else {
-      $('.reviews').empty();
-      toggleButton.text('show');
-    }
-  });
-
   apiStatus();
   handleButtonClick(objIds);
   getPlaces({});
+  toggleReviews();
 }
 
 function apiStatus () {
@@ -102,7 +91,7 @@ function getPlaces (objIds) {
           '</div>',
           '<div class="reviews">',
           '<h2>Review(s)',
-          '<span class="toggle_reviews"> show</span>',
+          `<span class="toggle_reviews" data-id=${content.id}> show</span>`,
           '</h2>',
           '</div>',
           '</article>'
@@ -126,18 +115,39 @@ function updateLocations (selectedLocations) {
   $('.locations h4').text(selectedLocations.sort().join(', '));
 }
 
-function fetchAndDisplayReviews () {
-  const reviews = [2, 5, 7];
-  console.log('LOOOPING');
-  for (const review of reviews) {
-    const reviewElement = `
-    <ul>
-      <li>
-        <h3>From ${review} the ${review}</h3>
-        <p>${review}</p>
-      </li>
-    </ul>
-    `;
-    $('.reviews').append(reviewElement);
-  }
+function fetchAndDisplayReviews (placeId) {
+  $.get(`http://0.0.0.0:5001/api/v1/places/${placeId}/reviews/`, function (reviews) {
+    for (const review of reviews) {
+    // Fetch user details for each review
+      $.get(`http://0.0.0.0:5001/api/v1/users/${review.user_id}/`, function (user) {
+        const firstName = user.first_name;
+        const lastName = user.last_name;
+
+        const createdAt = new Date(review.created_at);
+        const formattedDate = createdAt.toLocaleString();
+
+        const reviewElement = `
+        <ul>
+          <li>
+            <h3>From ${firstName} ${lastName} on ${formattedDate}</h3>
+            <p>${review.text}</p>
+          </li>
+        </ul>
+      `;
+
+        $('.reviews').append(reviewElement);
+      });
+    }
+  });
+}
+
+function toggleReviews () {
+  $(document).on('click', '.toggle_reviews', function () {
+    if ($(this).text() === ' show') {
+      fetchAndDisplayReviews($(this).attr('data-id'));
+      $(this).text(' hide');
+    } else if ($(this).text() === ' hide') {
+      $(this).text(' show');
+    }
+  });
 }
